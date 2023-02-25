@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_quiz_app/question.dart';
 import 'package:flutter_quiz_app/result_screen.dart';
 
 class QuizScreen extends StatefulWidget {
@@ -10,7 +11,42 @@ class QuizScreen extends StatefulWidget {
 
 class _QuizScreenState extends State<QuizScreen> {
   int option = -1;
-  String result = 'Chưa có gì';
+  int points = 0;
+
+  int currentQuestionIndex = 0;
+
+  List<Question> questions = [
+    Question(
+      "Trung Nguyễn tên thật là gì?",
+      [
+        "Trung",
+        "Nguyễn",
+        "Linh",
+        "Toàn",
+      ],
+      2,
+    ),
+    Question(
+      "Hôm nay thứ mấy?",
+      [
+        "Thứ hai",
+        "Thứ ba",
+        "Chủ Nhật",
+        "Thứ bảy",
+      ],
+      3,
+    ),
+    Question(
+      "Ngày mai thứ mấy?",
+      [
+        "Chủ Nhật",
+        "Thứ 5",
+        "Thứ 4",
+        "Thứ bảy",
+      ],
+      0,
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +63,20 @@ class _QuizScreenState extends State<QuizScreen> {
             const SizedBox(
               height: 16,
             ),
-            Text("Trung Nguyễn tên thật là gì"),
+            Text(questions[currentQuestionIndex].content),
             const SizedBox(
               height: 16,
+            ),
+            OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                backgroundColor: option == 0 ? Colors.blue[50] : null,
+              ),
+              onPressed: () {
+                setState(() {
+                  option = 0;
+                });
+              },
+              child: Text(questions[currentQuestionIndex].options[0]),
             ),
             OutlinedButton(
               style: OutlinedButton.styleFrom(
@@ -40,7 +87,7 @@ class _QuizScreenState extends State<QuizScreen> {
                   option = 1;
                 });
               },
-              child: Text("Trung"),
+              child: Text(questions[currentQuestionIndex].options[1]),
             ),
             OutlinedButton(
               style: OutlinedButton.styleFrom(
@@ -51,7 +98,7 @@ class _QuizScreenState extends State<QuizScreen> {
                   option = 2;
                 });
               },
-              child: Text("Nguyễn"),
+              child: Text(questions[currentQuestionIndex].options[2]),
             ),
             OutlinedButton(
               style: OutlinedButton.styleFrom(
@@ -62,36 +109,29 @@ class _QuizScreenState extends State<QuizScreen> {
                   option = 3;
                 });
               },
-              child: Text("Linh"),
-            ),
-            OutlinedButton(
-              style: OutlinedButton.styleFrom(
-                backgroundColor: option == 4 ? Colors.blue[50] : null,
-              ),
-              onPressed: () {
-                setState(() {
-                  option = 4;
-                });
-              },
-              child: Text("Khum biết"),
+              child: Text(questions[currentQuestionIndex].options[3]),
             ),
             ElevatedButton(
               onPressed: () {
-                if (option == 3) {
-                  result = 'Đúng rồi';
-                } else {
-                  result = 'Sai rồi';
+                if (questions[currentQuestionIndex].correctOption == option) {
+                  points += 1;
                 }
 
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => ResultScreen(result),
-                  ),
-                );
+                if (currentQuestionIndex == questions.length - 1) {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (context) => ResultScreen(points),
+                    ),
+                  );
+                } else {
+                  setState(() {
+                    currentQuestionIndex += 1;
+                    option = -1;
+                  });
+                }
               },
               child: Text('Tiếp theo'),
             ),
-            Text(result),
           ],
         ),
       ),
